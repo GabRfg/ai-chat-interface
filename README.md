@@ -1,104 +1,78 @@
-# IA Interface 🤖
+# AI Chat Interface
 
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
-![Framework](https://img.shields.io/badge/framework-React-blue?logo=react)
-![Versão](https://img.shields.io/badge/versão-1.0.0-informational)
-![Licença](https://img.shields.io/badge/licença-Proprietária-red)
+Front-end for an internal AI assistant: a chat screen in the style of modern LLM products plus an admin area to manage who can access it. Built as the client side of an in-house language model project, with the integration points left ready for the backend.
 
-A IA interface é uma plataforma de chat inteligente e segura, desenvolvida para uso interno na empresa. Ela oferece uma interface moderna e intuitiva para interação com nosso modelo de IA customizado, baseado na tecnologia da OpenAI, além de um painel administrativo completo para gestão de acessos.
+**Stack:** React 19 · Material UI 7 · React Router · Formik + Yup · Docker · Nginx
 
----
-
-## 📜 Sobre o Projeto
-
-O objetivo da IA Interface é centralizar a utilização de inteligência artificial na nossa organização, fornecendo uma ferramenta unificada, segura e adaptada às nossas necessidades. A plataforma foi construída com foco em uma experiência de usuário fluida e em ferramentas de administração robustas, garantindo que apenas usuários autorizados tenham acesso e que os administradores possam gerenciar a plataforma com facilidade.
+**Status:** UI complete, running on mock data — the AI responses, authentication and user list are not yet connected to a backend.
 
 ---
 
-## ✨ Funcionalidades Principais
+## Screens
 
-* **✨ Interface de Chat Moderna:** UI inspirada nas melhores plataformas do mercado, com histórico de conversa, renderização de mensagens e design responsivo.
-* **👤 Gestão de Usuários Completa:** Painel administrativo para criar, visualizar e gerenciar contas de usuários na plataforma.
-* **🔐 Autenticação Segura:** Sistema de Login e Cadastro, garantindo que apenas pessoal autorizado acesse a IA.
-* **📜 Histórico de Conversas:** Uma sidebar inteligente que salva e exibe o histórico de chats recentes para fácil acesso.
-* **🚀 Modelo de IA Customizado:** Integração direta com um modelo de linguagem próprio, construído sobre a base da API da OpenAI, para respostas mais precisas e contextualizadas ao nosso negócio.
-* **🎨 Tema Dinâmico e Estilizado:** Interface construída com Material-UI (MUI) e um sistema de tema customizável para consistência visual.
+| Route | Screen |
+| --- | --- |
+| `/` | Login |
+| `/register`, `/forgot` | Sign-up and password recovery |
+| `/dashboard` | Chat: message history, typing animation for responses, file attachment |
+| `/team` | User management table (MUI Data Grid) with edit and delete confirmation |
+| `/form` | Create user, validated with Formik + Yup |
+| `/edit-user/:id` | Edit user |
 
----
+## Highlights
 
-## 🛠️ Tecnologias Utilizadas
+- **Two layouts in one router** — auth pages render standalone; the app pages share a sidebar and top bar
+- **Responsive by design** — sidebar becomes a hamburger menu on mobile; chat, forms and tables were adapted with MUI breakpoints
+- **Conversation model** — each "New chat" gets its own ID and the message list is lifted to the layout, so the sidebar and the chat share state
+- **Light/dark theme** with a custom design-token palette (`src/theme.js`)
+- **Production container** — multi-stage Dockerfile builds the app and serves the static bundle with Nginx
 
-| Tecnologia | Descrição |
-| :--- | :--- |
-| **React.js** | Biblioteca principal para a construção da interface de usuário. |
-| **Material-UI (MUI)** | Suíte de componentes React para um design mais rápido e consistente. |
-| **React Pro Sidebar**| Componente utilizado para a criação da sidebar customizável. |
-| **OpenAI API** | Base para a comunicação com o nosso modelo próprio de inteligência artificial. |
-| **React Router**| Para gerenciamento das rotas da aplicação (Login, Dashboard, Admin, etc.). |
+## Running locally
 
----
-
-## 🚀 Como Executar o Projeto
-
-Siga os passos abaixo para configurar e executar o projeto em seu ambiente de desenvolvimento local.
-
-### Pré-requisitos
-
-* [Node.js](https://nodejs.org/en/) (versão 18.x ou superior)
-* `npm` ou `yarn`
-
-### Instalação
-
-1.  **Clone o repositório:**
-    ```bash
-    git clone [https://github.com/GabsFadel/react-dashboard-page.git](https://github.com/GabsFadel/react-dashboard-page.git)
-    ```
-
-2.  **Acesse a pasta do projeto:**
-    ```bash
-    cd react-dashboard-page
-    ```
-
-3.  **Instale as dependências:**
-    ```bash
-    npm install
-    # ou
-    yarn install
-    ```
-
-### Executando a Aplicação
-
-1.  **Inicie o servidor de desenvolvimento:**
-    ```bash
-    npm start
-    # ou
-    yarn start
-    ```
-
-2.  **Abra no navegador:**
-    Acesse [`http://localhost:3000`](http://localhost:3000) para ver a aplicação em execução.
-
----
-
-## 📁 Estrutura de Pastas
-
-A estrutura de pastas do projeto segue o padrão de aplicações React, com uma organização focada em cenas e componentes reutilizáveis.
-
-```
-/
-├── public/
-└── src/
-    ├── assets/
-    ├── components/   # Componentes reutilizáveis (Header, etc.)
-    ├── scenes/       # Páginas principais da aplicação (dashboard, login, team, etc.)
-    ├── theme/        # Arquivo de tema (theme.js)
-    ├── App.js
-    └── index.js
+```bash
+git clone https://github.com/GabRfg/react-ia-interface.git
+cd react-ia-interface
+npm install --legacy-peer-deps
+npm start
 ```
 
----
+Open `http://localhost:3000`. Any credentials log you in (authentication is mocked).
 
-## 📄 Licença
+**With Docker:**
 
-Este projeto é inspirado em outras plataformas de IA, e foi feito com conceito de implantação e estudos, fique a vontade para estudar seu código!
+```bash
+docker compose up --build
+```
 
+The app is served at `http://localhost:3001`.
+
+## Connecting a real model
+
+The integration points are marked in the code:
+
+- `src/scenes/dashboard/index.jsx` → `handleSendPrompt()` currently answers with a fixed message after 1 s. Replace the `setTimeout` with a call to your model's API, sending `chatId`, the prompt and the attached file.
+- `src/scenes/login/index.jsx` → `handleSubmit()` navigates without checking credentials.
+- `src/scenes/team/index.jsx` → user list comes from `src/data/mockData.js`.
+
+## Project structure
+
+```
+src/
+├── scenes/
+│   ├── dashboard/   # Chat screen
+│   ├── team/        # User list
+│   ├── form/        # Create user
+│   ├── editUser/    # Edit user
+│   ├── login/ register/ forgot/
+│   └── global/      # Sidebar and Topbar
+├── components/      # Shared UI (Header)
+├── data/            # Mock data
+└── theme.js         # Palette, typography and color mode
+```
+
+## Roadmap
+
+- [ ] Connect chat to the model API with streaming responses
+- [ ] Real authentication (JWT) and protected routes
+- [ ] Persist conversation history per user
+- [ ] Remove unused template dependencies (charts, calendar)
