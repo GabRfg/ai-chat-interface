@@ -2,7 +2,7 @@
 
 Front-end for an internal AI assistant: a chat screen in the style of modern LLM products plus an admin area to manage who can access it. Built as the client side of an in-house language model project, with the integration points left ready for the backend.
 
-**Stack:** React 19 · Material UI 7 · React Router · Formik + Yup · Docker · Nginx
+**Stack:** React 19 · Vite 8 · Material UI 9 · MUI X Data Grid 9 · React Router 7 · Formik + Yup · Docker · Nginx
 
 **Status:** UI complete, running on mock data — the AI responses, authentication and user list are not yet connected to a backend.
 
@@ -22,21 +22,22 @@ Front-end for an internal AI assistant: a chat screen in the style of modern LLM
 ## Highlights
 
 - **Two layouts in one router** — auth pages render standalone; the app pages share a sidebar and top bar
-- **Responsive by design** — sidebar becomes a hamburger menu on mobile; chat, forms and tables were adapted with MUI breakpoints
+- **Responsive by design** — MUI Drawer sidebar that collapses to an icon rail on desktop and becomes a hamburger menu on mobile; the app shell fits the viewport (`100dvh`) and only the page area scrolls
 - **Conversation model** — each "New chat" gets its own ID and the message list is lifted to the layout, so the sidebar and the chat share state
 - **Light/dark theme** with a custom design-token palette (`src/theme.js`)
-- **Production container** — multi-stage Dockerfile builds the app and serves the static bundle with Nginx
+- **Production container** — multi-stage Dockerfile (Node 22) builds the app and serves the static bundle with Nginx, with SPA fallback so deep links and refreshes work
+- **Code splitting** — admin screens (Data Grid) are lazy-loaded
 
 ## Running locally
 
 ```bash
 git clone https://github.com/GabRfg/react-ia-interface.git
 cd react-ia-interface
-npm install --legacy-peer-deps
-npm start
+npm install
+npm run dev
 ```
 
-Open `http://localhost:3000`. Any credentials log you in (authentication is mocked).
+Requires Node.js 20.19+ or 22.12+. Open `http://localhost:3000`. Any credentials log you in (authentication is mocked).
 
 **With Docker:**
 
@@ -64,7 +65,7 @@ src/
 │   ├── form/        # Create user
 │   ├── editUser/    # Edit user
 │   ├── login/ register/ forgot/
-│   └── global/      # Sidebar and Topbar
+│   └── global/      # Sidebar (MUI Drawer) and Topbar
 ├── components/      # Shared UI (Header)
 ├── data/            # Mock data
 └── theme.js         # Palette, typography and color mode
@@ -75,4 +76,5 @@ src/
 - [ ] Connect chat to the model API with streaming responses
 - [ ] Real authentication (JWT) and protected routes
 - [ ] Persist conversation history per user
-- [ ] Remove unused template dependencies (charts, calendar)
+- [x] Remove unused template dependencies (charts, calendar)
+- [ ] Add ESLint and a test setup (Vitest + Testing Library)

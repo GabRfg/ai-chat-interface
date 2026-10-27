@@ -1,18 +1,9 @@
-# Define a versão do Docker Compose
-version: '3.8'
-
-# Define os serviços (contêineres) da nossa aplicação
 services:
-  # O nome do nosso serviço. Pode ser qualquer nome.
   react-app:
-    # Indica ao Compose para construir a imagem a partir do Dockerfile no diretório atual ('.')
+    # Constrói a imagem a partir do Dockerfile neste diretório
     build: .
-    # Define um nome amigável para o contêiner
-    container_name: react-dashboard-app
-    # Mapeia a porta 3000 da sua máquina (host) para a porta 80 do contêiner (onde o Nginx está escutando)
-    # É aqui que a "mágica" acontece: você acessará pela porta 3000.
+    container_name: ai-chat-interface
+    # Porta 3001 da máquina -> porta 80 do Nginx no contêiner
     ports:
       - "3001:80"
-    # Política de reinicialização. 'unless-stopped' garante que o contêiner suba automaticamente
-    # com o Docker, a menos que você o pare manualmente.
     restart: unless-stopped
