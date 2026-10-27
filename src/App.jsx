@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider, useTheme, useMediaQuery } from "@mui/material";
-import 'react-pro-sidebar/dist/css/styles.css';
 import Topbar from "./scenes/global/Topbar";
 import Dashboard from "./scenes/dashboard";
 import { Route, Routes, useLocation } from "react-router-dom";
@@ -19,8 +18,8 @@ const MainLayout = () => {
   const location = useLocation();
 
   // --- LÓGICA DE RESPONSIVIDADE E ESTADO CENTRALIZADOS ---
-  const isMobile = useMediaQuery(theme.breakpoints.down("md", "sm", "xs"));
-  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile); // A sidebar começa fechada no mobile
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // só usado no mobile (Drawer temporário)
   const [messages, setMessages] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
 

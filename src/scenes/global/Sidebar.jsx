@@ -1,235 +1,308 @@
 import { useState } from "react";
-import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import 'react-pro-sidebar/dist/css/styles.css';
-import { Box, IconButton, Typography, useTheme, Drawer } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+  Avatar,
+  Box,
+  Collapse,
+  Drawer,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
-import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
+import MenuOpenOutlinedIcon from "@mui/icons-material/MenuOpenOutlined";
+import AddCommentOutlinedIcon from "@mui/icons-material/AddCommentOutlined";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 
-const Item = ({ title, to, icon, selected, setSelected, closeMobileMenu }) => {
-  const navigate = useNavigate();
-  return (
-    <MenuItem
-      active={selected === title}
-      onClick={() => {
-        setSelected(title);
-        navigate(to);
-        if (closeMobileMenu) closeMobileMenu();
-      }}
-      icon={icon}
-    >
-      <Typography>
-        {title}
-        </Typography>
-    </MenuItem>
-  );
-};
+export const SIDEBAR_WIDTH = 270;
+export const SIDEBAR_COLLAPSED_WIDTH = 72;
 
 const mockChatHistory = [
-  "Monitor Fora de Quadro:", 
-  "IT Service Launch Success F...", 
-  "Documento Sobre React Ho...",
-  "Como fazer café dalgona", 
-  "Teste page", 
-  "Melhores práticas de UI/UX", 
+  "Monitor Fora de Quadro",
+  "IT Service Launch Success",
+  "Documento Sobre React Hooks",
+  "Como fazer café dalgona",
+  "Teste page",
+  "Melhores práticas de UI/UX",
   "Cozinhar",
 ];
 
-const SidebarContent = ({
-  onNewChat,
-  isMobile,
-  selected,
-  setSelected,
-  isCollapsed,
-  setIsCollapsed,
-  closeMobileMenu
-}) => {
+const adminItems = [
+  { title: "Dashboard", to: "/dashboard", icon: <HomeOutlinedIcon /> },
+  { title: "Usuários", to: "/team", icon: <PeopleOutlinedIcon /> },
+  { title: "Criar Usuários", to: "/form", icon: <PersonAddOutlinedIcon /> },
+];
+
+const INITIAL_VISIBLE_COUNT = 5;
+
+// Item de navegação: mostra tooltip com o título quando a sidebar está colapsada
+const NavItem = ({ title, icon, selected, onClick, isCollapsed, nested = false, muted = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isShowingMore, setIsShowingMore] = useState(false);
-  const navigate = useNavigate();
-  const initialVisibleCount = 5;
-  const visibleHistory = isShowingMore ? mockChatHistory : mockChatHistory.slice(0, initialVisibleCount);
 
   return (
-    <ProSidebar collapsed={isCollapsed}>
-      <Menu iconShape="square">
-        <MenuItem
-          onClick={() => (isMobile ? closeMobileMenu() : setIsCollapsed(!isCollapsed))}
-          icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-          style={{ margin: "10px 0 20px 0", color: colors.grey[100] }}
+    <Tooltip title={isCollapsed ? title : ""} placement="right" disableInteractive>
+      <ListItemButton
+        selected={selected}
+        onClick={onClick}
+        sx={{
+          minHeight: 44,
+          mx: 1,
+          px: 1.5,
+          pl: nested && !isCollapsed ? 3 : 1.5,
+          borderRadius: "8px",
+          justifyContent: isCollapsed ? "center" : "flex-start",
+          color: muted ? colors.grey[300] : colors.grey[100],
+          "&.Mui-selected": {
+            backgroundColor: colors.blueAccent[800],
+            color: colors.blueAccent[200],
+            "& .MuiListItemIcon-root": { color: colors.blueAccent[200] },
+          },
+          "&.Mui-selected:hover": { backgroundColor: colors.blueAccent[700] },
+          "&:hover": { backgroundColor: colors.grey[800] },
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            mr: isCollapsed ? 0 : 1.5,
+            justifyContent: "center",
+            color: "inherit",
+          }}
         >
-          {!isCollapsed && (
-            <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
-              <Typography variant="h3" color={colors.grey[100]}>
-                Chats
-              </Typography>
-              <IconButton onClick={() => (isMobile ? closeMobileMenu() : setIsCollapsed(!isCollapsed))}>
-                <MenuOutlinedIcon />
-              </IconButton>
-            </Box>
-          )}
-        </MenuItem>
-
+          {icon}
+        </ListItemIcon>
         {!isCollapsed && (
-          <Box mb="25px">
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <img
-                alt="profile-user"
-                width="100px"
-                height="100px"
-                src={`../../assets/user.jpeg`}
-                style={{ cursor: "pointer", borderRadius: "50%" }}
-              />
-            </Box>
-            <Box textAlign="center">
-              <Typography variant="h3" color={colors.grey[200]} sx={{ m: "10px 0 0 0" }}>
-                IA Interface
-              </Typography>
-              <Typography variant="h6" color={colors.greenAccent[500]}>
-                © Desenvolvido para uso interno de empresas
-              </Typography>
-            </Box>
-          </Box>
+          <ListItemText
+            primary={title}
+            slotProps={{ primary: { noWrap: true, sx: { fontSize: 14 } } }}
+          />
         )}
-
-        <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-          <MenuItem
-            active={selected === "Nova conversa"}
-            style={{ color: colors.grey[100] }}
-            onClick={() => {
-              setSelected("Nova conversa");
-              if (onNewChat) onNewChat();
-              navigate("/dashboard");
-              if (isMobile) closeMobileMenu();
-            }}
-            icon={<AddCommentOutlinedIcon />}
-          >
-            <Typography>
-              Nova conversa
-            </Typography>
-          </MenuItem>
-
-          {!isCollapsed && (
-            <Typography 
-              variant="h6" 
-              color={colors.grey[300]} 
-              sx={{ m: "15px 0 5px 20px" }}>
-              Recentes
-            </Typography>
-          )}
-
-          {visibleHistory.map((chatTitle, index) => (
-            <MenuItem
-              key={`${chatTitle}-${index}`}
-              style={{ color: colors.grey[100] }}
-              icon={<ChatBubbleOutlineIcon />}
-              onClick={() => {
-                setSelected(chatTitle);
-                if (isMobile) closeMobileMenu();
-              }}
-              active={selected === chatTitle}
-            >
-              <Typography>{chatTitle}</Typography>
-            </MenuItem>
-          ))}
-
-          {!isCollapsed && mockChatHistory.length > initialVisibleCount && (
-            <MenuItem
-              icon={isShowingMore ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              style={{ color: colors.grey[300] }}
-              onClick={() => setIsShowingMore(!isShowingMore)}
-            >
-              <Typography>
-                {isShowingMore ? "Mostrar menos" : "Mostrar mais"}
-              </Typography>
-            </MenuItem>
-          )}
-
-          <Box my="20px" />
-          <SubMenu  
-              title="Administração" 
-              icon={<AdminPanelSettingsOutlinedIcon />} 
-              style={{ color: colors.grey[100] }}>
-            <Item
-              title="Dashboard"
-              to="/dashboard"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-              closeMobileMenu={closeMobileMenu}
-            />
-            <Item
-              title="Usuários"
-              to="/team"
-              icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-              closeMobileMenu={closeMobileMenu}
-            />
-            <Item
-              title="Criar Usuários"
-              to="/form"
-              icon={<PersonAddOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-              closeMobileMenu={closeMobileMenu}
-            />
-          </SubMenu>
-        </Box>
-      </Menu>
-    </ProSidebar>
+      </ListItemButton>
+    </Tooltip>
   );
 };
 
-// Componente que só coordena mobile (Drawer) x desktop (colapse)
-// Estado vindo do App.js para abrir/fechar no mobile.
-const Sidebar = ({ onNewChat, isMobile, isSidebarOpen, setIsSidebarOpen }) => {
+const SidebarContent = ({ onNewChat, isCollapsed, onToggle, onNavigate }) => {
   const theme = useTheme();
-  const [isCollapsed, setIsCollapsed] = useState(false); // controla colapso no desktop
-  const [selected, setSelected] = useState("Dashboard");
+  const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const [isShowingMore, setIsShowingMore] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(adminItems.some((item) => item.to === pathname));
+  const [selectedChat, setSelectedChat] = useState(null);
+
+  const visibleHistory = isShowingMore
+    ? mockChatHistory
+    : mockChatHistory.slice(0, INITIAL_VISIBLE_COUNT);
+
+  const go = (to) => {
+    navigate(to);
+    onNavigate?.();
+  };
+
+  const subheaderSx = {
+    backgroundColor: "transparent",
+    color: colors.grey[300],
+    lineHeight: "32px",
+    fontSize: 12,
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+    px: 2.5,
+  };
 
   return (
-    <>
-      {isMobile ? (
-        <Drawer
-          anchor="left"
-          open={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          // opcional: defina a largura do drawer para combinar com o ProSidebar
-          //slotProps={{ sx: { width: 260 } }}
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+      {/* Cabeçalho: título + botão de colapsar */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: isCollapsed ? "center" : "space-between",
+          px: isCollapsed ? 0 : 2.5,
+          py: 1.5,
+          minHeight: 64,
+          flexShrink: 0,
+        }}
+      >
+        {!isCollapsed && (
+          <Typography variant="h3" sx={{ color: colors.grey[100], fontWeight: 600 }}>
+            Chats
+          </Typography>
+        )}
+        <IconButton
+          onClick={onToggle}
+          aria-label={isCollapsed ? "Expandir menu" : "Recolher menu"}
+          sx={{ color: colors.grey[100] }}
         >
-          <SidebarContent
-            onNewChat={onNewChat}
-            isMobile={true}
-            selected={selected}
-            setSelected={setSelected}
-            isCollapsed={false} // Drawer sempre expandido
-            setIsCollapsed={() => {}} // não usado no mobile
-            closeMobileMenu={() => setIsSidebarOpen(false)}
+          {isCollapsed ? <MenuOutlinedIcon /> : <MenuOpenOutlinedIcon />}
+        </IconButton>
+      </Box>
+
+      {/* Perfil */}
+      {!isCollapsed && (
+        <Box sx={{ textAlign: "center", px: 2, pb: 2, flexShrink: 0 }}>
+          <Avatar
+            alt="Foto do usuário"
+            src="/assets/user.jpeg"
+            sx={{ width: 80, height: 80, mx: "auto" }}
           />
-        </Drawer>
-      ) : (
-        <Box sx={{ position: "relative", top: 0, height: "100vh" }}>
-          <SidebarContent
-            onNewChat={onNewChat}
-            isMobile={false}
-            selected={selected}
-            setSelected={setSelected}
-            isCollapsed={isCollapsed}
-            setIsCollapsed={setIsCollapsed}
-          />
+          <Typography variant="h4" sx={{ color: colors.grey[100], mt: 1.5, fontWeight: 600 }}>
+            IA Interface
+          </Typography>
+          <Typography variant="h6" sx={{ color: colors.greenAccent[500] }}>
+            Desenvolvido para uso interno de empresas
+          </Typography>
         </Box>
       )}
-    </>
+
+      {/* Lista rolável: só esta área rola, cabeçalho e perfil ficam fixos */}
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", pb: 2 }}>
+        <List disablePadding>
+          <NavItem
+            title="Nova conversa"
+            icon={<AddCommentOutlinedIcon />}
+            isCollapsed={isCollapsed}
+            onClick={() => {
+              setSelectedChat(null);
+              onNewChat?.();
+              go("/dashboard");
+            }}
+          />
+        </List>
+
+        <List
+          disablePadding
+          subheader={!isCollapsed && <ListSubheader sx={subheaderSx}>Recentes</ListSubheader>}
+          sx={{ mt: 1 }}
+        >
+          {visibleHistory.map((chatTitle) => (
+            <NavItem
+              key={chatTitle}
+              title={chatTitle}
+              icon={<ChatBubbleOutlineIcon fontSize="small" />}
+              isCollapsed={isCollapsed}
+              selected={selectedChat === chatTitle}
+              onClick={() => {
+                setSelectedChat(chatTitle);
+                onNavigate?.();
+              }}
+            />
+          ))}
+          {mockChatHistory.length > INITIAL_VISIBLE_COUNT && (
+            <NavItem
+              title={isShowingMore ? "Mostrar menos" : "Mostrar mais"}
+              icon={isShowingMore ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              isCollapsed={isCollapsed}
+              muted
+              onClick={() => setIsShowingMore((prev) => !prev)}
+            />
+          )}
+        </List>
+
+        <List disablePadding sx={{ mt: 2 }}>
+          <NavItem
+            title="Administração"
+            icon={<AdminPanelSettingsOutlinedIcon />}
+            isCollapsed={isCollapsed}
+            onClick={() => setIsAdminOpen((prev) => !prev)}
+          />
+          <Collapse in={isAdminOpen} timeout="auto" unmountOnExit>
+            <List disablePadding>
+              {adminItems.map((item) => (
+                <NavItem
+                  key={item.to}
+                  {...item}
+                  nested
+                  isCollapsed={isCollapsed}
+                  selected={pathname === item.to}
+                  onClick={() => go(item.to)}
+                />
+              ))}
+            </List>
+          </Collapse>
+        </List>
+      </Box>
+    </Box>
+  );
+};
+
+// Desktop: Drawer permanente que colapsa para uma faixa de ícones.
+// Mobile: Drawer temporário (overlay), aberto pelo botão da Topbar.
+const Sidebar = ({ onNewChat, isMobile, isSidebarOpen, setIsSidebarOpen }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const paperSx = {
+    backgroundColor: colors.grey[900],
+    backgroundImage: "none",
+    borderRight: `1px solid ${colors.grey[800]}`,
+    boxSizing: "border-box",
+  };
+
+  if (isMobile) {
+    return (
+      <Drawer
+        variant="temporary"
+        anchor="left"
+        open={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        ModalProps={{ keepMounted: true }}
+        sx={{ "& .MuiDrawer-paper": { ...paperSx, width: SIDEBAR_WIDTH, maxWidth: "85vw" } }}
+      >
+        <SidebarContent
+          onNewChat={onNewChat}
+          isCollapsed={false}
+          onToggle={() => setIsSidebarOpen(false)}
+          onNavigate={() => setIsSidebarOpen(false)}
+        />
+      </Drawer>
+    );
+  }
+
+  const width = isCollapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH;
+  const widthTransition = theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.shorter,
+  });
+
+  return (
+    <Drawer
+      variant="permanent"
+      sx={{
+        width,
+        flexShrink: 0,
+        transition: widthTransition,
+        "& .MuiDrawer-paper": {
+          ...paperSx,
+          width,
+          position: "relative", // fica no fluxo do flex, sem sobrepor o conteúdo
+          overflowX: "hidden",
+          transition: widthTransition,
+        },
+      }}
+    >
+      <SidebarContent
+        onNewChat={onNewChat}
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed((prev) => !prev)}
+      />
+    </Drawer>
   );
 };
 
