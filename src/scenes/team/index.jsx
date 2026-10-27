@@ -59,14 +59,16 @@ const Team = ({ isMobile }) => {
 
 
   let columns = [
-    { field: "id", headerName: "ID" },
-    { field: "name", headerName: "Nome", flex: 1, cellClassName: "name-column--cell" },
-    { field: "phone", headerName: "Contato", flex: 1 },
-    { field: "email", headerName: "E-mail", flex: 1 },
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "name", headerName: "Nome", flex: 1, minWidth: isMobile ? 110 : 150, cellClassName: "name-column--cell" },
+    { field: "phone", headerName: "Contato", flex: 1, minWidth: 130 },
+    { field: "email", headerName: "E-mail", flex: 1.4, minWidth: 200 },
     {
       field: "access",
-      headerName: "Nivel de acesso",
+      headerName: "Nível de acesso",
       flex: 1,
+      minWidth: isMobile ? 110 : 140,
+      display: "flex", // centraliza o badge verticalmente na célula
       renderCell: ({ row: { access } }) => (
         <Box
           sx={{
@@ -82,8 +84,7 @@ const Team = ({ isMobile }) => {
           {access === "manager" && <SecurityOutlinedIcon />}
           {access === "user" && <LockOpenOutlinedIcon />}
           <Typography
-            color={colors.grey[100]} 
-              sx={{ ml: "5px" }}>{access}
+              sx={{ color: colors.grey[100], ml: "5px" }}>{access}
           </Typography>
         </Box>
       ),
@@ -91,7 +92,11 @@ const Team = ({ isMobile }) => {
     {
       field: "actions",
       headerName: "Ações",
-      flex: 1,
+      flex: 0.8,
+      minWidth: 110,
+      sortable: false,
+      filterable: false,
+      display: "flex",
       renderCell: (params) => (
         <Box
           sx={{
@@ -121,7 +126,11 @@ const Team = ({ isMobile }) => {
 
   return (
     <Box sx={{
-      m: isMobile ? "10px" : "20px"
+      p: isMobile ? "10px" : "20px",
+      height: "100%",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
     }}>
       <Box
         sx={{
@@ -129,7 +138,8 @@ const Team = ({ isMobile }) => {
           flexDirection: isMobile ? "column" : "row",
           justifyContent: "space-between",
           alignItems: isMobile ? "flex-start" : "center",
-          gap: isMobile ? 2 : 0
+          gap: isMobile ? 2 : 0,
+          flexShrink: 0
         }}>
         <Header 
           title="Usuários" 
@@ -152,8 +162,10 @@ const Team = ({ isMobile }) => {
       </Box>
       <Box
         sx={{
-          m: "20px 0 0 0",
-          overflow: "auto",
+          // A tabela ocupa o espaço restante da página; o próprio Data Grid rola por dentro
+          flex: 1,
+          minHeight: 360,
+          width: "100%",
           "& .MuiDataGrid-root": { border: "none" },
           "& .MuiDataGrid-cell": { borderBottom: "none" },
           "& .name-column--cell": { color: colors.greenAccent[300] },
@@ -162,9 +174,11 @@ const Team = ({ isMobile }) => {
           "& .MuiDataGrid-footerContainer": { borderTop: "none", backgroundColor: colors.blueAccent[700] }
         }}>
         <DataGrid
-          // autoHeight
-          rows={users} 
+          rows={users}
           columns={columns}
+          disableRowSelectionOnClick
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{ pagination: { paginationModel: { pageSize: 25 } } }}
         />
       </Box>
 
@@ -183,7 +197,7 @@ const Team = ({ isMobile }) => {
             {"Confirmar Deleção"}
         </DialogTitle>
         <DialogContent>
-            <DialogContentText color={colors.grey[100]}>
+            <DialogContentText sx={{ color: colors.grey[100] }}>
                 Gostaria mesmo de deletar o usuário "{deleteConfirmation.userName}"?
                 <br/>
                 Esta ação não pode ser desfeita.

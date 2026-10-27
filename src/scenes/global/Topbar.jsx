@@ -51,6 +51,7 @@ const Topbar = ({ setIsSidebarOpen /* opcional: isSidebarOpen */ }) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        flexShrink: 0,
         p: { xs: 1, sm: 2 }
       }}>
       {/* HAMBÚRGUER NO MOBILE */}
