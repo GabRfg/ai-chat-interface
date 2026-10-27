@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography, useTheme } from "@mui/material";
 import { keyframes } from '@emotion/react';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router";
 import { tokens } from "../../theme";
 
 // Animações permanecem as mesmas
@@ -72,13 +72,18 @@ const Login = () => {
         }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component='h1' variant="h4" fontWeight="bold" sx={{
-          textAlign: "center",
-          mb: 3,
-          color: colors.grey[100],
-          // MELHORIA 2: Ajusta o tamanho da fonte em telas menores
-          fontSize: { xs: '1.75rem', sm: '2.125rem' }
-        }}>
+        <Typography
+          component='h1'
+          variant="h4"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            mb: 3,
+            color: colors.grey[100],
+
+            // MELHORIA 2: Ajusta o tamanho da fonte em telas menores
+            fontSize: { xs: '1.75rem', sm: '2.125rem' }
+          }}>
           Login
         </Typography>
 
@@ -99,7 +104,6 @@ const Login = () => {
               '& .MuiInput-underline:after': { borderBottom: `2px solid ${colors.blueAccent[500]}` },
               input: { color: colors.grey[100] },
             }}
-            InputLabelProps={{ style: { color: colors.grey[300] } }}
           />
           <TextField
             variant="standard"
@@ -117,7 +121,6 @@ const Login = () => {
               '& .MuiInput-underline:after': { borderBottom: `2px solid ${colors.blueAccent[500]}` },
               input: { color: colors.grey[100] },
             }}
-            InputLabelProps={{ style: { color: colors.grey[300] } }}
           />
           <FormControlLabel
             control={<Checkbox sx={{
@@ -148,20 +151,20 @@ const Login = () => {
           </Button>
 
           {/* MELHORIA 3: Grid responsivo para os links */}
-          <Grid container
-            justifyContent="space-between"
-            alignItems="center"
+          <Grid
+            container
             sx={{
+              justifyContent: "space-between",
+              alignItems: "center",
               flexDirection: { xs: 'column', sm: 'row' },
               gap: { xs: 1, sm: 0 }
-            }}
-          >
-            <Grid item>
+            }}>
+            <Grid>
               <RouterLink to="/forgot" style={{ color: colors.blueAccent[400], textDecoration: 'none', fontSize: '0.9rem' }}>
                 Esqueceu sua senha?
               </RouterLink>
             </Grid>
-            <Grid item>
+            <Grid>
               <RouterLink to="/register" style={{ color: colors.blueAccent[400], textDecoration: 'none', fontSize: '0.9rem' }}>
                 Registrar-se
               </RouterLink>

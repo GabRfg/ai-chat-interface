@@ -11,7 +11,7 @@ import {
   useMediaQuery
 } from "@mui/material";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { ColorModeContext, tokens } from "../../theme";
 // import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 // import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -47,11 +47,12 @@ const Topbar = ({ setIsSidebarOpen /* opcional: isSidebarOpen */ }) => {
 
   return (
     <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      p={{ xs: 1, sm: 2 }}
-    >
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        p: { xs: 1, sm: 2 }
+      }}>
       {/* HAMBÚRGUER NO MOBILE */}
       {isMobile && (
         <IconButton onClick={() => setIsSidebarOpen((prev) => !prev)}>
@@ -60,10 +61,14 @@ const Topbar = ({ setIsSidebarOpen /* opcional: isSidebarOpen */ }) => {
       )}
 
       {/* Espaçador para empurrar os ícones da direita */}
-      <Box flexGrow={1} />
+      <Box sx={{
+        flexGrow: 1
+      }} />
 
       {/* ÍCONES DA DIREITA */}
-      <Box display="flex">
+      <Box sx={{
+        display: "flex"
+      }}>
         {/* <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === 'dark' ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
         </IconButton> */}

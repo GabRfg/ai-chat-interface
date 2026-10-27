@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router"; 
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined'; 
 
 // 1. O componente agora recebe a prop 'isMobile' do App.js
@@ -44,15 +44,18 @@ const Form = ({ isMobile }) => {
   });
 
   return (
-    <Box m={isMobile ? "10px" : "20px"}>
+    <Box sx={{
+      m: isMobile ? "10px" : "20px"
+    }}>
       {/* 2. O cabeçalho agora se adapta a telas pequenas */}
-      <Box 
-        display="flex" 
-        flexDirection={isMobile ? "column" : "row"}
-        justifyContent="space-between" 
-        alignItems={isMobile ? "flex-start" : "center"}
-        gap={isMobile ? 2 : 0}
-      >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between",
+          alignItems: isMobile ? "flex-start" : "center",
+          gap: isMobile ? 2 : 0
+        }}>
         <Header title="Criação de Usuário" subtitle="Crie um novo perfil para a plataforma Orga IA" />
         <Button
           onClick={() => navigate('/team')}
@@ -88,15 +91,16 @@ const Form = ({ isMobile }) => {
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
-              display="grid"
-              gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
               sx={{
+                display: "grid",
+                gap: "30px",
+                gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+
                 // 3. A regra do grid agora usa 'isMobile' para tornar os campos responsivos
                 "& > div": { gridColumn: isMobile ? "span 4" : undefined },
-                mt: "30px", 
-              }}
-            >
+
+                mt: "30px"
+              }}>
               {/* Para campos que devem ficar lado a lado no desktop, aplicamos a lógica individualmente */}
               <TextField  fullWidth 
                           variant="filled" 
@@ -198,7 +202,12 @@ const Form = ({ isMobile }) => {
               </TextField>
 
             </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "end",
+                mt: "20px"
+              }}>
               <Button type="submit" sx={{
                 backgroundColor: colors.greenAccent[600],
                 color: colors.grey[100],

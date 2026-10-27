@@ -12,12 +12,12 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataTeam } from "../../data/mockData";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Header from "../../components/Header";
 
@@ -69,14 +69,15 @@ const Team = ({ isMobile }) => {
       flex: 1,
       renderCell: ({ row: { access } }) => (
         <Box
-          m="0 auto" 
-          p="5px 10px" 
-          display="flex" 
-          justifyContent="center"
-          alignItems="center" // alinhamento vertical
-          backgroundColor={access === 'admin' ? colors.greenAccent[600] : colors.greenAccent[700]}
-          borderRadius="4px"
-        >
+          sx={{
+            m: "0 auto",
+            p: "5px 10px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: access === 'admin' ? colors.greenAccent[600] : colors.greenAccent[700],
+            borderRadius: "4px"
+          }}>
           {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
           {access === "manager" && <SecurityOutlinedIcon />}
           {access === "user" && <LockOpenOutlinedIcon />}
@@ -92,7 +93,12 @@ const Team = ({ isMobile }) => {
       headerName: "Ações",
       flex: 1,
       renderCell: (params) => (
-        <Box display="flex" justifyContent="center" width="100%">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%"
+          }}>
           <IconButton 
             onClick={() => handleEdit(params.row.id)}>
             <EditOutlinedIcon />
@@ -114,14 +120,17 @@ const Team = ({ isMobile }) => {
   }
 
   return (
-    <Box m={isMobile ? "10px" : "20px"}>
-      <Box 
-        display="flex" 
-        flexDirection={isMobile ? "column" : "row"}
-        justifyContent="space-between" 
-        alignItems={isMobile ? "flex-start" : "center"}
-        gap={isMobile ? 2 : 0}
-      >
+    <Box sx={{
+      m: isMobile ? "10px" : "20px"
+    }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between",
+          alignItems: isMobile ? "flex-start" : "center",
+          gap: isMobile ? 2 : 0
+        }}>
         <Header 
           title="Usuários" 
           subtitle="Administração de usuários da IA" />
@@ -141,18 +150,17 @@ const Team = ({ isMobile }) => {
           Criar Novo Usuário
         </Button>
       </Box>
-      <Box 
-        m="20px 0 0 0"
+      <Box
         sx={{
+          m: "20px 0 0 0",
           overflow: "auto",
           "& .MuiDataGrid-root": { border: "none" },
           "& .MuiDataGrid-cell": { borderBottom: "none" },
           "& .name-column--cell": { color: colors.greenAccent[300] },
           "& .MuiDataGrid-columnHeaders": { backgroundColor: colors.blueAccent[700], borderBottom: "none" },
           "& .MuiDataGrid-virtualScroller": { backgroundColor: colors.blackAccent[800] },
-          "& .MuiDataGrid-footerContainer": { borderTop: "none", backgroundColor: colors.blueAccent[700] },
-        }}
-      >
+          "& .MuiDataGrid-footerContainer": { borderTop: "none", backgroundColor: colors.blueAccent[700] }
+        }}>
         <DataGrid
           // autoHeight
           rows={users} 

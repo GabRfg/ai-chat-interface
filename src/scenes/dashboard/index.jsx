@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Box, Typography, InputBase, IconButton, useTheme, Chip } from "@mui/material";
 import { keyframes } from '@emotion/react';
 import { tokens } from "../../theme";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -130,47 +130,67 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
   }, [messages]);
 
   return (
-    <Box 
-      m={isMobile ? "10px" : "20px"} 
-      display="flex" 
-      flexDirection="column" 
-      height={isMobile ? "calc(100vh - 80px)" : "calc(100vh - 100px)"}
-    >
+    <Box
+      sx={{
+        m: isMobile ? "10px" : "20px",
+        display: "flex",
+        flexDirection: "column",
+        height: isMobile ? "calc(100vh - 80px)" : "calc(100vh - 100px)"
+      }}>
       <Header title="Sua IA" subtitle="Bem-vindo a nossa IA!" />
-      <Box display="flex" flexDirection="column" justifyContent="flex-end" flexGrow={1} pb={2} position="relative">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          flexGrow: 1,
+          pb: 2,
+          position: "relative"
+        }}>
         <Box
-          flexGrow={1} display="flex" flexDirection="column"
-          justifyContent={messages.length === 0 ? "center" : "flex-start"}
-          alignItems="center" sx={{ overflowY: 'auto', p: 2 }}
-        >
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: messages.length === 0 ? "center" : "flex-start",
+            alignItems: "center",
+            overflowY: 'auto',
+            p: 2
+          }}>
           {messages.length === 0 ? (
-            <Typography 
+            <Typography
               variant={isMobile ? "h2" : "h1"}
-              textAlign="center" 
               sx={{
+                textAlign: "center",
                 fontSize: isMobile ? '32px' : '56px',
                 fontWeight: 'bold',
                 background: `linear-gradient(45deg, #FFD700, ${colors.blueAccent[500]}, #FFD700)`,
-                backgroundSize: '200% 200%', backgroundClip: 'text', WebkitBackgroundClip: 'text',
-                color: 'transparent', animation: `${gradientAnimation} 4s ease infinite`,
-              }}
-            >
+                backgroundSize: '200% 200%',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                animation: `${gradientAnimation} 4s ease infinite`
+              }}>
               Pergunte a IA!
             </Typography>
           ) : (
-            <Box  width="100%" 
-                  maxWidth="900px" 
-                  display="flex" 
-                  flexDirection="column" 
-                  gap={2}>
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: "900px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2
+              }}>
               {messages.map(msg => (
                 <Box
                   key={msg.id}
-                  display="flex"
-                  gap={isMobile ? 1 : 1.5}
-                  alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
-                  flexDirection={msg.sender === 'user' ? 'row-reverse' : 'row'}
-                >
+                  sx={{
+                    display: "flex",
+                    gap: isMobile ? 1 : 1.5,
+                    alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                    flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row'
+                  }}>
                   <Box sx={{
                     borderRadius: '50%',
                     backgroundColor: msg.sender === 'user' ? colors.blueAccent[800] : colors.greenAccent[800], // css aparencia do envio de prompt na tela
@@ -198,9 +218,18 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
           )}
         </Box>
 
-        <Box width="100%" display="flex" flexDirection="column" alignItems="center" pt={2}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            pt: 2
+          }}>
           {selectedFile && (
-            <Box mb={1}>
+            <Box sx={{
+              mb: 1
+            }}>
               <Chip
                 label={selectedFile.name}
                 onDelete={handleRemoveFile}
@@ -209,19 +238,29 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
               />
             </Box>
           )}
-          <Box width={{ xs: '95%', sm: '90%', md: '80%' }} maxWidth="900px">
+          <Box
+            sx={{
+              width: { xs: '95%', sm: '90%', md: '80%' },
+              maxWidth: "900px"
+            }}>
             <Box
-              display="flex" alignItems="center" p={1}
               sx={{
-                backgroundColor: colors.primary[700], borderRadius: '28px', border: `1px solid ${colors.grey[600]}`,
+                display: "flex",
+                alignItems: "center",
+                p: 1,
+                backgroundColor: colors.primary[700],
+                borderRadius: '28px',
+                border: `1px solid ${colors.grey[600]}`,
                 transition: 'all 0.3s ease',
+
                 '&:hover, &:focus-within': {
                   backgroundColor: colors.primary[400], borderColor: 'transparent',
                   boxShadow: `0 0 12px 2px ${colors.blueAccent[600]}`,
                 },
-                '&:focus-within': { animation: `${pulseAnimation} 2s infinite` } //animação da barra de input de prompt
-              }}
-            >
+
+                //animação da barra de input de prompt
+                '&:focus-within': { animation: `${pulseAnimation} 2s infinite` }
+              }}>
               <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
               <IconButton sx={{ color: colors.grey[100] }} onClick={handleIconClick}>
                 <AddCircleOutlineIcon />
