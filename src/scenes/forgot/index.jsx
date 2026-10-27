@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Grid, TextField, Typography, useTheme } from "@mui/material";
 import { keyframes } from '@emotion/react';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router";
 import { tokens } from "../../theme";
 
 // Animações permanecem as mesmas
@@ -35,7 +35,7 @@ const ForgotPassword = () => {
   return (
     <Box // Container de fundo (sem alterações)
       sx={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         width: '100%',
         display: 'flex',
         alignItems: 'center',
@@ -68,12 +68,17 @@ const ForgotPassword = () => {
         }}>
           <EmailOutlinedIcon />
         </Avatar>
-        <Typography component='h1' variant="h4" fontWeight="bold" sx={{
-          textAlign: "center",
-          color: colors.grey[100],
-          // MELHORIA 2: Tamanho de fonte do título responsivo
-          fontSize: { xs: '1.6rem', sm: '2.125rem' }
-        }}>
+        <Typography
+          component='h1'
+          variant="h4"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            color: colors.grey[100],
+
+            // MELHORIA 2: Tamanho de fonte do título responsivo
+            fontSize: { xs: '1.6rem', sm: '2.125rem' }
+          }}>
           Recuperar Senha
         </Typography>
         <Typography variant="body2" sx={{
@@ -100,7 +105,6 @@ const ForgotPassword = () => {
               '& .MuiInput-underline:after': { borderBottom: `2px solid ${colors.blueAccent[500]}` },
               input: { color: colors.grey[100] },
             }}
-            InputLabelProps={{ style: { color: colors.grey[300] } }}
           />
 
           <Button
@@ -123,8 +127,10 @@ const ForgotPassword = () => {
             Enviar Link de Recuperação
           </Button>
 
-          <Grid container justifyContent="center">
-            <Grid item>
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
+            <Grid>
               {/* MELHORIA 3: Adiciona um tamanho de fonte menor para o link */}
               <RouterLink to="/" style={{
                 color: colors.blueAccent[400],

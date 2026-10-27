@@ -1,14 +1,10 @@
-# Ignora as dependências locais, pois elas serão instaladas dentro do contêiner
+# Dependências e build locais são recriados dentro do contêiner
 node_modules
-
-# Ignora a pasta de build local, se existir
 build
 
-# Ignora arquivos de configuração do Docker
+# Arquivos do Docker e do Git não entram na imagem
 Dockerfile
 docker-compose.yml
-
-# Ignora o diretório do Git
 .git
 
-# Ignora o log d
+npm-debug.log*

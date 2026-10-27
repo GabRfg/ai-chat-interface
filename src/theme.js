@@ -136,7 +136,7 @@ export const tokens = (mode) => ({
           600: "#676666",
           700: "#4d4d4d",
           800: "#343333",
-          900: "#2f2f2f;"
+          900: "#2f2f2f"
         }
       }),
 });
@@ -172,7 +172,7 @@ export const themeSettings = (mode) => {
           }),
     },
     typography: { 
-      fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+      fontFamily: ["\"Source Sans 3\"", "\"Source Sans Pro\"", "system-ui", "sans-serif"].join(","),
       fontSize: 12,
       h1: { fontSize: 40 },
       h2: { fontSize: 32 },

@@ -1,22 +1,19 @@
-# Estágio 1: Build da Aplicação (Builder)
-FROM node:18-alpine AS builder
+# Estágio 1: build da aplicação
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
-COPY package-lock.json ./
-
-RUN npm install --legacy-peer-deps
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
-
 RUN npm run build
 
-# Estágio 2: Servidor de Produção (Final)
+# Estágio 2: servidor de produção
 FROM nginx:stable-alpine
 
-# Copia os arquivos estáticos gerados no estágio de 'build' para a pasta padrão do Nginx
+# Fallback de SPA: rotas como /dashboard servem o index.html em vez de 404
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Expõe a porta 80 (porta padrão do Nginx) dentro do contêiner
 EXPOSE 80

@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Grid, TextField, Typography, useTheme } from "@mui/material";
 import { keyframes } from '@emotion/react';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router";
 import { tokens } from "../../theme";
 
 // Animações permanecem as mesmas
@@ -40,7 +40,7 @@ const Register = () => {
   return (
     <Box // Container de fundo (sem alterações)
       sx={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         width: '100%',
         display: 'flex',
         alignItems: 'center',
@@ -74,12 +74,17 @@ const Register = () => {
         }}>
           <PersonAddOutlinedIcon />
         </Avatar>
-        <Typography component='h1' variant="h4" fontWeight="bold" sx={{
-          textAlign: "center",
-          color: colors.grey[100],
-          // MELHORIA 2: Tamanho de fonte do título responsivo
-          fontSize: { xs: '1.75rem', sm: '2.125rem' }
-        }}>
+        <Typography
+          component='h1'
+          variant="h4"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            color: colors.grey[100],
+
+            // MELHORIA 2: Tamanho de fonte do título responsivo
+            fontSize: { xs: '1.75rem', sm: '2.125rem' }
+          }}>
           Criar Conta
         </Typography>
         <Typography variant="body2" sx={{
@@ -94,7 +99,7 @@ const Register = () => {
         <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           {/* MELHORIA 3: Este Grid já era responsivo! Nenhuma alteração necessária aqui. */}
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 variant="standard"
                 placeholder="Nome"
@@ -108,7 +113,7 @@ const Register = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 variant="standard"
                 placeholder="Sobrenome"
@@ -162,8 +167,10 @@ const Register = () => {
             Criar Conta
           </Button>
 
-          <Grid container justifyContent="center">
-            <Grid item>
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
+            <Grid>
               <RouterLink to="/" style={{
                 color: colors.blueAccent[400],
                 textDecoration: 'none',

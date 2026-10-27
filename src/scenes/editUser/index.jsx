@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 import { mockDataTeam } from "../../data/mockData";
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined'; 
 
@@ -18,7 +18,9 @@ const EditUser = ({ isMobile }) => {
 
   if (!userToEdit) {
     return (
-      <Box m="20px">
+      <Box sx={{
+        m: "20px"
+      }}>
         <Typography>Usuário não encontrado!</Typography>
       </Box>
     );
@@ -58,15 +60,18 @@ const EditUser = ({ isMobile }) => {
   });
 
   return (
-    <Box m={isMobile ? "10px" : "20px"}>
+    <Box sx={{
+      m: isMobile ? "10px" : "20px"
+    }}>
       {/* 2. O cabeçalho agora se adapta a telas pequenas */}
-      <Box 
-        display="flex" 
-        flexDirection={isMobile ? "column" : "row"}
-        justifyContent="space-between" 
-        alignItems={isMobile ? "flex-start" : "center"}
-        gap={isMobile ? 2 : 0}
-      >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between",
+          alignItems: isMobile ? "flex-start" : "center",
+          gap: isMobile ? 2 : 0
+        }}>
         <Header title="EDITAR USUÁRIO" subtitle={`Editando o perfil de ${userToEdit.name}`} />
         <Button
           onClick={() => navigate('/team')} 
@@ -96,15 +101,16 @@ const EditUser = ({ isMobile }) => {
         {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Box
-              display="grid"
-              gap="30px"
-              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-              sx={{ 
+              sx={{
+                display: "grid",
+                gap: "30px",
+                gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+
                 // 3. A regra do grid agora usa 'isMobile' para tornar os campos responsivos
                 "& > div": { gridColumn: isMobile ? "span 4" : undefined },
-                mt: "30px" 
-              }}
-            >
+
+                mt: "30px"
+              }}>
               {/* Para campos que devem ficar lado a lado no desktop, aplicamos a lógica de novo */}
               <TextField 
                   fullWidth variant="filled" 
@@ -211,7 +217,12 @@ const EditUser = ({ isMobile }) => {
                 <MenuItem value="admin">Admin</MenuItem>
               </TextField>
             </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "end",
+                mt: "20px"
+              }}>
               <Button type="submit" 
                   sx={{ backgroundColor: colors.greenAccent[600], 
                         color: colors.grey[100], 

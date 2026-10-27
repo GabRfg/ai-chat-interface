@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Box, Typography, InputBase, IconButton, useTheme, Chip } from "@mui/material";
 import { keyframes } from '@emotion/react';
 import { tokens } from "../../theme";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Header from "../../components/Header";
 
 // --- COMPONENTE TypingEffect ---
-const TypingEffect = ({ fullText, typingSpeed = 30 }) => {
+const TypingEffect = ({ fullText, typingSpeed = 30, onDone }) => {
   const [displayedText, setDisplayedText] = useState('');
 
   useEffect(() => {
@@ -26,12 +26,14 @@ const TypingEffect = ({ fullText, typingSpeed = 30 }) => {
         // Para o intervalo quando o índice ultrapassa o comprimento do texto.
         if (i > fullText.length) {
           clearInterval(intervalId);
+          onDone?.();
         }
       }, typingSpeed);
 
       // Função de limpeza para parar o intervalo se o componente for desmontado.
       return () => clearInterval(intervalId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fullText, typingSpeed]);
 
   const isTyping = displayedText.length < fullText.length;
@@ -46,10 +48,16 @@ const TypingEffect = ({ fullText, typingSpeed = 30 }) => {
 
 const blink = keyframes`50% { border-color: transparent; }`;
 
+const gradientAnimation = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
 const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  
+  const colors = useMemo(() => tokens(theme.palette.mode), [theme.palette.mode]);
+
   const [localMessages, setLocalMessages] = useState([]);
   const messages = propMessages || localMessages;
   const updateMessages = setMessages || setLocalMessages;
@@ -59,16 +67,11 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
   const fileInputRef = useRef(null);
   const endOfMessagesRef = useRef(null);
 
-  const gradientAnimation = keyframes`
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  `;
-  const pulseAnimation = keyframes`
+  const pulseAnimation = useMemo(() => keyframes`
     0% { box-shadow: 0 0 8px 0px ${colors.blueAccent[700]}; }
     50% { box-shadow: 0 0 16px 4px ${colors.blueAccent[500]}; }
     100% { box-shadow: 0 0 8px 0px ${colors.blueAccent[700]}; }
-  `;
+  `, [colors]);
 
   // --- FUNÇÕES DE MANIPULAÇÃO  ---
   const handleIconClick = () => {
@@ -118,6 +121,11 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
     }, 1000);
   };
 
+  // Marca a resposta como já digitada para não reanimar ao voltar para a tela
+  const markAsTyped = (id) => {
+    updateMessages(prev => prev.map(m => (m.id === id ? { ...m, typed: true } : m)));
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -130,51 +138,74 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
   }, [messages]);
 
   return (
-    <Box 
-      m={isMobile ? "10px" : "20px"} 
-      display="flex" 
-      flexDirection="column" 
-      height={isMobile ? "calc(100vh - 80px)" : "calc(100vh - 100px)"}
-    >
+    <Box
+      sx={{
+        px: isMobile ? "10px" : "20px",
+        pt: isMobile ? "10px" : "20px",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        boxSizing: "border-box",
+      }}>
       <Header title="Sua IA" subtitle="Bem-vindo a nossa IA!" />
-      <Box display="flex" flexDirection="column" justifyContent="flex-end" flexGrow={1} pb={2} position="relative">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minHeight: 0,
+        }}>
         <Box
-          flexGrow={1} display="flex" flexDirection="column"
-          justifyContent={messages.length === 0 ? "center" : "flex-start"}
-          alignItems="center" sx={{ overflowY: 'auto', p: 2 }}
-        >
+          sx={{
+            flex: 1,
+            minHeight: 0, // sem isso o flex item cresce com as mensagens e empurra o input para fora
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: messages.length === 0 ? "center" : "flex-start",
+            alignItems: "center",
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            p: { xs: 1, sm: 2 }
+          }}>
           {messages.length === 0 ? (
-            <Typography 
+            <Typography
               variant={isMobile ? "h2" : "h1"}
-              textAlign="center" 
               sx={{
+                textAlign: "center",
                 fontSize: isMobile ? '32px' : '56px',
                 fontWeight: 'bold',
                 background: `linear-gradient(45deg, #FFD700, ${colors.blueAccent[500]}, #FFD700)`,
-                backgroundSize: '200% 200%', backgroundClip: 'text', WebkitBackgroundClip: 'text',
-                color: 'transparent', animation: `${gradientAnimation} 4s ease infinite`,
-              }}
-            >
+                backgroundSize: '200% 200%',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                animation: `${gradientAnimation} 4s ease infinite`
+              }}>
               Pergunte a IA!
             </Typography>
           ) : (
-            <Box  width="100%" 
-                  maxWidth="900px" 
-                  display="flex" 
-                  flexDirection="column" 
-                  gap={2}>
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: "900px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2
+              }}>
               {messages.map(msg => (
                 <Box
                   key={msg.id}
-                  display="flex"
-                  gap={isMobile ? 1 : 1.5}
-                  alignSelf={msg.sender === 'user' ? 'flex-end' : 'flex-start'}
-                  flexDirection={msg.sender === 'user' ? 'row-reverse' : 'row'}
-                >
+                  sx={{
+                    display: "flex",
+                    maxWidth: "100%",
+                    gap: isMobile ? 1 : 1.5,
+                    alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                    flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row'
+                  }}>
                   <Box sx={{
                     borderRadius: '50%',
                     backgroundColor: msg.sender === 'user' ? colors.blueAccent[800] : colors.greenAccent[800], // css aparencia do envio de prompt na tela
-                    p: 1, display: 'flex', alignSelf: 'flex-start'
+                    p: 1, display: 'flex', alignSelf: 'flex-start', flexShrink: 0
                   }}>
                     {msg.sender === 'user' ? <AccountCircleIcon /> : <SmartToyIcon />}
                   </Box>
@@ -182,11 +213,13 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
                     backgroundColor: msg.sender === 'user' ? colors.blueAccent[700] : colors.primary[600],
                     color: colors.grey[100], 
                     p: '10px 15px', // css do retorno de mensagem pela IA 
-                    borderRadius: '15px', 
-                    maxWidth: '600px',
+                    borderRadius: '15px',
+                    minWidth: 0,
+                    maxWidth: { xs: '100%', md: '600px' },
+                    overflowWrap: 'anywhere', // palavras/URLs longas quebram em vez de vazar da bolha
                   }}>
-                    {msg.sender === 'ai' ? (
-                      <TypingEffect fullText={msg.text} />
+                    {msg.sender === 'ai' && !msg.typed ? (
+                      <TypingEffect fullText={msg.text} onDone={() => markAsTyped(msg.id)} />
                     ) : (
                       <Typography sx={{ whiteSpace: 'pre-wrap' }}>{msg.text}</Typography>
                     )}
@@ -198,32 +231,53 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
           )}
         </Box>
 
-        <Box width="100%" display="flex" flexDirection="column" alignItems="center" pt={2}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            flexShrink: 0,
+            pt: 1,
+            pb: "max(16px, env(safe-area-inset-bottom))",
+          }}>
           {selectedFile && (
-            <Box mb={1}>
+            <Box sx={{
+              mb: 1
+            }}>
               <Chip
                 label={selectedFile.name}
+                sx={{ maxWidth: 280, backgroundColor: colors.grey[700] }}
                 onDelete={handleRemoveFile}
                 color="primary"
-                sx={{ backgroundColor: colors.grey[700] }}
               />
             </Box>
           )}
-          <Box width={{ xs: '95%', sm: '90%', md: '80%' }} maxWidth="900px">
+          <Box
+            sx={{
+              width: { xs: '95%', sm: '90%', md: '80%' },
+              maxWidth: "900px"
+            }}>
             <Box
-              display="flex" alignItems="center" p={1}
               sx={{
-                backgroundColor: colors.primary[700], borderRadius: '28px', border: `1px solid ${colors.grey[600]}`,
+                display: "flex",
+                alignItems: "center",
+                p: 1,
+                backgroundColor: colors.primary[700],
+                borderRadius: '28px',
+                border: `1px solid ${colors.grey[600]}`,
                 transition: 'all 0.3s ease',
+
                 '&:hover, &:focus-within': {
                   backgroundColor: colors.primary[400], borderColor: 'transparent',
                   boxShadow: `0 0 12px 2px ${colors.blueAccent[600]}`,
                 },
-                '&:focus-within': { animation: `${pulseAnimation} 2s infinite` } //animação da barra de input de prompt
-              }}
-            >
+
+                //animação da barra de input de prompt
+                '&:focus-within': { animation: `${pulseAnimation} 2s infinite` }
+              }}>
               <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
-              <IconButton sx={{ color: colors.grey[100] }} onClick={handleIconClick}>
+              <IconButton sx={{ color: colors.grey[100] }} onClick={handleIconClick} aria-label="Anexar arquivo">
                 <AddCircleOutlineIcon />
               </IconButton>
               <InputBase
@@ -237,6 +291,7 @@ const Dashboard = ({ messages: propMessages, setMessages, chatId, isMobile }) =>
               />
               <IconButton
                 onClick={handleSendPrompt}
+                aria-label="Enviar mensagem"
                 disabled={prompt.trim() === "" && !selectedFile}
                 sx={{
                   color: colors.grey[100],
